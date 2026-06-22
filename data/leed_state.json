@@ -1,0 +1,65 @@
+{
+  "updated": "2026-06-22T21:30:34+00:00",
+  "rating_system": "LEED v5 BD+C",
+  "portfolio_readiness_pct": 0,
+  "department_avg_completion_pct": 42,
+  "divisions": {},
+  "departments": {
+    "Engineering & Utilities": {
+      "complete_pct": 50,
+      "tasks": 8,
+      "done": 2,
+      "in_progress": 4,
+      "open": 2
+    },
+    "EHS & Compliance": {
+      "complete_pct": 57,
+      "tasks": 7,
+      "done": 3,
+      "in_progress": 2,
+      "open": 2
+    },
+    "Civil & Projects": {
+      "complete_pct": 33,
+      "tasks": 6,
+      "done": 1,
+      "in_progress": 2,
+      "open": 3
+    },
+    "Procurement & Supply Chain": {
+      "complete_pct": 12,
+      "tasks": 4,
+      "done": 0,
+      "in_progress": 1,
+      "open": 3
+    },
+    "HR / SHRM & Admin": {
+      "complete_pct": 50,
+      "tasks": 5,
+      "done": 2,
+      "in_progress": 1,
+      "open": 2
+    },
+    "Sustainability Cell / PMO": {
+      "complete_pct": 50,
+      "tasks": 8,
+      "done": 2,
+      "in_progress": 4,
+      "open": 2
+    },
+    "Finance": {
+      "complete_pct": 50,
+      "tasks": 4,
+      "done": 1,
+      "in_progress": 2,
+      "open": 1
+    },
+    "IT & Data": {
+      "complete_pct": 33,
+      "tasks": 3,
+      "done": 0,
+      "in_progress": 2,
+      "open": 1
+    }
+  }
+}
