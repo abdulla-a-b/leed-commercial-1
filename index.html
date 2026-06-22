@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LEED v5 Certification Tracker — Good &amp; Fast Packaging Industry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Archivo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --ink:#0A2E25;          /* deep evergreen ink — chrome + text */
+  --ink-2:#0F3B2F;
+  --ink-3:#164A3B;
+  --surface:#EDF1EC;      /* misted off-white */
+  --card:#FBFCFA;
+  --line:#D6DED6;
+  --line-2:#C3CEC3;
+  --lime:#B6E61E;         /* signal lime — points secured */
+  --lime-deep:#7FA80F;
+  --teal:#1B8F86;         /* jade-teal — water / ecology */
+  --amber:#E6A12E;        /* at-risk / carbon */
+  --sienna:#C7522A;       /* blocked / gap */
+  --muted:#5C6E63;
+  --muted-2:#8A998E;
+  --plat:#9BB7C9;         /* platinum band */
+  --shadow:0 1px 0 rgba(10,46,37,.04), 0 8px 28px -18px rgba(10,46,37,.35);
+  --r:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Archivo',system-ui,sans-serif;
+  background:var(--surface);color:var(--ink);
+  -webkit-font-smoothing:antialiased;line-height:1.5;
+}
+.mono{font-family:'IBM Plex Mono',monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3,.disp{font-family:'Fraunces',serif}
+
+/* ============ SHELL ============ */
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+.nav{
+  background:var(--ink);color:#DDE7DF;position:sticky;top:0;height:100vh;
+  display:flex;flex-direction:column;padding:22px 14px;gap:6px;
+}
+.brand{display:flex;align-items:baseline;font-family:'Fraunces';font-weight:700;
+  font-size:23px;letter-spacing:-.5px;padding:4px 10px 18px;}
+.brand b{font-weight:700}
+.brand .g{color:var(--amber)} .brand .u1{color:var(--teal)} .brand .u2{color:var(--lime)}
+.brand .l{color:#B69CE6} .brand .b{color:#E68A3D} .brand .a{color:#E68AA8}
+.nav-sub{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:1.5px;
+  text-transform:uppercase;color:#6E8478;padding:0 10px 14px;border-bottom:1px solid #1C4537;margin-bottom:10px}
+.nav button{
+  all:unset;display:flex;align-items:center;gap:11px;cursor:pointer;
+  padding:10px 12px;border-radius:10px;font-size:14px;font-weight:500;color:#B6C7BC;
+  transition:background .15s,color .15s}
+.nav button .ic{width:18px;height:18px;flex:none;opacity:.85}
+.nav button:hover{background:#143E31;color:#EAF2EC}
+.nav button.on{background:var(--lime);color:var(--ink);font-weight:600}
+.nav button.on .ic{opacity:1}
+.nav .spacer{flex:1}
+.nav-foot{font-size:11px;color:#5E7468;padding:12px 10px 2px;line-height:1.6}
+.nav-foot a{color:#8FB89F;text-decoration:none}
+
+.main{padding:30px 38px 60px;max-width:1240px;width:100%}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  .nav{flex-direction:row;height:auto;position:sticky;overflow-x:auto;padding:12px;align-items:center}
+  .brand,.nav-sub,.nav-foot,.spacer{display:none}
+  .nav button{white-space:nowrap;padding:9px 13px}
+  .main{padding:20px 18px 50px}
+}
+
+/* ============ HEADER BAND ============ */
+.facility{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:18px;margin-bottom:8px}
+.facility .eyebrow{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:2px;
+  text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:6px}
+.facility h1{font-size:33px;font-weight:600;letter-spacing:-.8px;line-height:1.05}
+.facility h1 span{color:var(--muted);font-weight:400}
+.sys-chip{display:inline-flex;gap:8px;align-items:center;background:var(--ink);
+  color:#E7F0E9;border-radius:999px;padding:7px 15px;font-size:12.5px;font-weight:500}
+.sys-chip b{color:var(--lime);font-family:'IBM Plex Mono'}
+.asof{font-family:'IBM Plex Mono';font-size:11px;color:var(--muted-2);margin-top:7px}
+.rule{height:1px;background:var(--line-2);margin:18px 0 26px}
+
+/* ============ GENERIC CARD ============ */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:20px 22px}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
+.card-h h3{font-size:17px;font-weight:600;letter-spacing:-.3px}
+.card-h .hint{font-size:12px;color:var(--muted-2)}
+.grid{display:grid;gap:18px}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g2{grid-template-columns:repeat(2,1fr)}
+@media(max-width:900px){.g3,.g2{grid-template-columns:1fr}}
+
+.eyebrow-s{font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:1.6px;
+  text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:14px}
+
+/* status pills */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;
+  padding:3px 9px;border-radius:999px;font-family:'IBM Plex Mono';letter-spacing:.3px}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%}
+.p-sec{background:#EDF7D6;color:#5B7A0C}.p-sec::before{background:var(--lime-deep)}
+.p-prog{background:#FBEFD7;color:#9A6912}.p-prog::before{background:var(--amber)}
+.p-open{background:#ECEFEC;color:#6B7A6F}.p-open::before{background:var(--muted-2)}
+.p-gap{background:#F8E2D9;color:#A63C18}.p-gap::before{background:var(--sienna)}
+
+/* ============ SIGNATURE: CERTIFICATION LADDER ============ */
+.ladder-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;align-items:end;
+  padding:14px 8px 4px;position:relative}
+.ladder-grid{position:absolute;inset:14px 8px 30px;pointer-events:none}
+.thr{position:absolute;left:0;right:0;border-top:1px dashed var(--line-2)}
+.thr span{position:absolute;right:0;top:-8px;font-family:'IBM Plex Mono';font-size:10px;
+  color:var(--muted-2);background:var(--card);padding:0 4px;letter-spacing:.5px}
+.thr.plat{border-top-color:var(--plat)} .thr.plat span{color:#5E7E92}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px;position:relative;z-index:2}
+.col-bar{width:62px;border-radius:9px 9px 3px 3px;position:relative;display:flex;
+  flex-direction:column;justify-content:flex-end;overflow:hidden;transition:height .9s cubic-bezier(.2,.8,.2,1);
+  background:#E7ECE7;box-shadow:inset 0 0 0 1px var(--line)}
+.seg{width:100%;transition:height .9s cubic-bezier(.2,.8,.2,1)}
+.seg.sec{background:linear-gradient(180deg,var(--lime),var(--lime-deep))}
+.seg.prog{background:repeating-linear-gradient(135deg,#F3D38A,#F3D38A 6px,#EFC76F 6px,#EFC76F 12px)}
+.col-score{font-family:'Fraunces';font-weight:600;font-size:24px;line-height:1}
+.col-score small{font-size:12px;color:var(--muted-2);font-family:'IBM Plex Mono';font-weight:500}
+.col-name{font-size:12.5px;font-weight:600;text-align:center}
+.col-tgt{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--muted)}
+.ladder-legend{display:flex;gap:18px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.lk{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--muted)}
+.lk i{width:13px;height:13px;border-radius:3px;display:inline-block}
+.lk i.sec{background:var(--lime)} .lk i.prog{background:#EFC76F}
+.lk i.open{background:#E7ECE7;box-shadow:inset 0 0 0 1px var(--line)}
+
+/* impact area split bars */
+.impact{display:flex;flex-direction:column;gap:15px}
+.imp-row .imp-top{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.imp-row .imp-top b{font-weight:600}
+.imp-row .imp-top .mono{color:var(--muted)}
+.track{height:9px;background:#E7ECE7;border-radius:999px;overflow:hidden}
+.track i{display:block;height:100%;border-radius:999px}
+
+/* KPI mini */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:760px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px;box-shadow:var(--shadow)}
+.kpi .v{font-family:'Fraunces';font-size:28px;font-weight:600;letter-spacing:-.5px;line-height:1}
+.kpi .v small{font-size:14px;color:var(--muted-2)}
+.kpi .k{font-size:11.5px;color:var(--muted);margin-top:5px;font-weight:500}
+.kpi .d{font-family:'IBM Plex Mono';font-size:10.5px;margin-top:7px}
+.up{color:var(--lime-deep)}.warn{color:var(--amber)}.down{color:var(--sienna)}
+
+/* ============ SCORECARD ============ */
+.tabsub{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.tabsub button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;padding:7px 14px;
+  border-radius:999px;color:var(--muted);border:1px solid var(--line-2);transition:.15s}
+.tabsub button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cat{margin-bottom:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+.cat-h{display:flex;align-items:center;gap:14px;padding:13px 18px;cursor:pointer;background:var(--card)}
+.cat-h:hover{background:#F4F7F3}
+.cat-tag{font-family:'IBM Plex Mono';font-weight:600;font-size:12px;color:var(--teal);width:34px}
+.cat-name{font-weight:600;font-size:14.5px;flex:1}
+.cat-bar{width:150px;height:7px;background:#E7ECE7;border-radius:999px;overflow:hidden}
+.cat-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--lime),var(--lime-deep))}
+.cat-pts{font-family:'IBM Plex Mono';font-size:12.5px;font-weight:600;width:62px;text-align:right}
+.cat-pts small{color:var(--muted-2);font-weight:400}
+.cat-chev{transition:transform .2s;color:var(--muted-2)}
+.cat.open .cat-chev{transform:rotate(90deg)}
+.cat-body{display:none;border-top:1px solid var(--line);padding:6px 0}
+.cat.open .cat-body{display:block}
+.credit{display:flex;align-items:center;gap:13px;padding:9px 18px;font-size:13px}
+.credit:not(:last-child){border-bottom:1px solid #EEF2EE}
+.credit .cid{font-family:'IBM Plex Mono';font-size:11.5px;color:var(--muted);width:54px;font-weight:500}
+.credit .cn{flex:1}
+.credit .req{font-size:9.5px;font-family:'IBM Plex Mono';letter-spacing:.5px;color:var(--sienna);
+  border:1px solid var(--sienna);border-radius:4px;padding:1px 5px;text-transform:uppercase}
+.credit .cpts{font-family:'IBM Plex Mono';font-size:12px;width:46px;text-align:right;color:var(--muted)}
+
+/* ============ ROADMAP ============ */
+.phase{display:grid;grid-template-columns:38px 1fr;gap:16px;position:relative;padding-bottom:6px}
+.phase:not(:last-child)::before{content:"";position:absolute;left:18px;top:34px;bottom:-6px;width:2px;background:var(--line-2)}
+.phase-dot{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono';font-weight:600;font-size:13px;z-index:2;flex:none}
+.phase.done .phase-dot{background:var(--lime);color:var(--ink)}
+.phase.active .phase-dot{background:var(--ink);color:var(--lime);box-shadow:0 0 0 4px rgba(182,230,30,.25)}
+.phase.todo .phase-dot{background:#E7ECE7;color:var(--muted)}
+.phase-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin-bottom:16px;box-shadow:var(--shadow)}
+.phase-card .ph-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.phase-card h4{font-family:'Fraunces';font-size:16.5px;font-weight:600}
+.phase-card .when{font-family:'IBM Plex Mono';font-size:11px;color:var(--muted)}
+.phase-card p{font-size:13px;color:var(--muted);margin-top:7px;line-height:1.55}
+.phase-card .tasks{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.tk{font-size:11.5px;background:#F1F5F0;border:1px solid var(--line);border-radius:7px;padding:4px 9px;color:var(--ink-3)}
+.tk.ok{background:#EDF7D6;border-color:#CDE38C;color:#5B7A0C}
+
+/* ============ DOCS ============ */
+.doc-row{display:flex;align-items:center;gap:14px;padding:11px 16px;background:var(--card);
+  border:1px solid var(--line);border-radius:10px;margin-bottom:9px}
+.doc-row .dn{flex:1;font-size:13.5px;font-weight:500}
+.doc-row .dmeta{font-family:'IBM Plex Mono';font-size:11px;color:var(--muted-2)}
+.dbar{width:120px;height:7px;background:#E7ECE7;border-radius:999px;overflow:hidden}
+.dbar i{display:block;height:100%;border-radius:999px}
+
+/* ============ COST ============ */
+.cost-table{width:100%;border-collapse:collapse;font-size:13px}
+.cost-table th{text-align:left;font-family:'IBM Plex Mono';font-size:10.5px;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--muted);font-weight:600;padding:9px 12px;border-bottom:1px solid var(--line-2)}
+.cost-table td{padding:11px 12px;border-bottom:1px solid #EEF2EE}
+.cost-table td.num{font-family:'IBM Plex Mono';text-align:right;font-variant-numeric:tabular-nums}
+.cost-table tr:last-child td{border-bottom:none}
+.cost-table tfoot td{font-weight:700;border-top:2px solid var(--ink)}
+
+/* ============ DATA ENTRY ============ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:700px){.form-grid{grid-template-columns:1fr}}
+.field label{display:block;font-size:11.5px;font-weight:600;color:var(--muted);margin-bottom:6px;
+  font-family:'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line-2);
+  border-radius:9px;font-family:'Archivo';font-size:14px;background:var(--card);color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:2px solid var(--teal);outline-offset:1px;border-color:var(--teal)}
+.btn{all:unset;cursor:pointer;background:var(--ink);color:var(--lime);font-weight:600;font-size:14px;
+  padding:12px 22px;border-radius:10px;text-align:center;transition:.15s;display:inline-block}
+.btn:hover{background:var(--ink-3)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line-2)}
+.note{background:#FBEFD7;border:1px solid #EAD4A0;color:#7A560F;font-size:12.5px;
+  padding:11px 14px;border-radius:10px;line-height:1.5}
+.note b{font-weight:600}
+.config-pill{font-family:'IBM Plex Mono';font-size:11px;background:#ECEFEC;color:var(--muted);
+  padding:3px 8px;border-radius:6px}
+
+/* ============ DEPARTMENTS ============ */
+.dept-summary{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;margin-bottom:22px}
+@media(max-width:900px){.dept-summary{grid-template-columns:1fr}}
+.dept-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:900px){.dept-grid{grid-template-columns:1fr}}
+.dept{background:var(--card);border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);overflow:hidden}
+.dept-top{display:flex;align-items:center;gap:12px;padding:15px 18px 13px;border-bottom:1px solid #EEF2EE}
+.dept-badge{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-family:'IBM Plex Mono';font-weight:600;font-size:13px;color:#fff;flex:none}
+.dept-meta{flex:1;min-width:0}
+.dept-meta h4{font-family:'Fraunces';font-size:16px;font-weight:600;line-height:1.15}
+.dept-meta .lead{font-size:11.5px;color:var(--muted);margin-top:2px}
+.dept-pct{text-align:right;flex:none}
+.dept-pct .n{font-family:'Fraunces';font-size:22px;font-weight:600;line-height:1}
+.dept-pct .l{font-size:10px;font-family:'IBM Plex Mono';color:var(--muted-2);letter-spacing:.5px}
+.dept-prog{height:6px;background:#E7ECE7}
+.dept-prog i{display:block;height:100%}
+.dept-tasks{padding:6px 0}
+.task{display:flex;align-items:flex-start;gap:11px;padding:9px 18px;font-size:12.8px}
+.task:not(:last-child){border-bottom:1px solid #F1F4F1}
+.task .tcid{font-family:'IBM Plex Mono';font-size:10.5px;color:var(--teal);font-weight:600;width:46px;flex:none;padding-top:1px}
+.task .tt{flex:1;line-height:1.4}
+.task .tt small{display:block;color:var(--muted-2);font-size:10.5px;margin-top:1px}
+.task .tph{font-size:9px;font-family:'IBM Plex Mono';letter-spacing:.5px;text-transform:uppercase;
+  padding:1px 5px;border-radius:4px;flex:none;margin-top:1px}
+.tph.ach{background:#EDF7D6;color:#5B7A0C}.tph.mnt{background:#DCEFEC;color:#0E6B63}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:4px}
+.dot.done{background:var(--lime-deep)}.dot.prog{background:var(--amber)}
+.dot.open{background:var(--muted-2)}.dot.gap{background:var(--sienna)}
+
+/* ============ MAINTENANCE CYCLE ============ */
+.road-split{display:flex;gap:8px;margin:6px 0 22px}
+.road-split button{all:unset;cursor:pointer;font-size:12.5px;font-weight:600;padding:7px 16px;border-radius:999px;
+  color:var(--muted);border:1px solid var(--line-2);transition:.15s}
+.road-split button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.cycle-intro{background:#DCEFEC;border:1px solid #B6DBD5;color:#0E5048;font-size:12.8px;
+  padding:13px 16px;border-radius:11px;line-height:1.55;margin-bottom:20px}
+.cycle-intro b{font-weight:600}
+.cycle{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+@media(max-width:760px){.cycle{grid-template-columns:1fr}}
+.cyc-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;box-shadow:var(--shadow);position:relative}
+.cyc-card .freq{display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono';font-size:10px;
+  letter-spacing:.6px;text-transform:uppercase;color:var(--teal);font-weight:600;margin-bottom:9px}
+.cyc-card .freq::before{content:"↻";font-size:13px}
+.cyc-card h4{font-family:'Fraunces';font-size:16px;font-weight:600;margin-bottom:6px}
+.cyc-card p{font-size:12.8px;color:var(--muted);line-height:1.55}
+.cyc-card .who{font-size:11px;color:var(--ink-3);margin-top:9px;font-weight:500}
+.arc5{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.arc5 span{font-size:11px;background:#F1F5F0;border:1px solid var(--line);border-radius:7px;padding:3px 9px;color:var(--ink-3)}
+
+/* ============ TASK DESK ============ */
+.ws-bar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.ws-who{display:flex;align-items:center;gap:12px}
+.ws-who h4{font-family:'Fraunces';font-size:18px;font-weight:600;line-height:1.1}
+.ws-who .lead{font-size:11.5px;color:var(--muted)}
+.ws-right{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ws-pct{font-size:13px;color:var(--muted)}.ws-pct b{font-family:'Fraunces';font-size:20px;color:var(--ink)}
+.ws-table{width:100%;border-collapse:collapse;font-size:13px}
+.ws-table th{text-align:left;font-family:'IBM Plex Mono';font-size:10px;letter-spacing:.7px;text-transform:uppercase;
+  color:var(--muted);font-weight:600;padding:11px 12px;background:#F4F7F3;border-bottom:1px solid var(--line-2)}
+.ws-table td{padding:8px 12px;border-bottom:1px solid #EEF2EE;vertical-align:middle}
+.ws-table tr:last-child td{border-bottom:none}
+.ws-table input,.ws-table select{width:100%;border:1px solid transparent;background:transparent;font-family:'Archivo';
+  font-size:13px;padding:7px 8px;border-radius:7px;color:var(--ink)}
+.ws-table input:hover,.ws-table select:hover{background:#F4F7F3}
+.ws-table input:focus,.ws-table select:focus{outline:none;border-color:var(--teal);background:#fff}
+.ws-table .cidcol input{font-family:'IBM Plex Mono';font-size:11.5px;color:var(--teal);font-weight:600}
+.ws-table select.st{font-weight:600;font-family:'IBM Plex Mono';font-size:11.5px}
+.ws-st-done{color:#5B7A0C}.ws-st-prog{color:#9A6912}.ws-st-open{color:#6B7A6F}.ws-st-gap{color:#A63C18}
+.ws-del{all:unset;cursor:pointer;color:var(--muted-2);font-size:16px;line-height:1;padding:4px 8px;border-radius:6px}
+.ws-del:hover{background:#F8E2D9;color:var(--sienna)}
+.ws-foot{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.ws-mini{border:1px solid var(--line);border-radius:11px;background:var(--card);padding:13px 16px;margin-bottom:10px;box-shadow:var(--shadow)}
+.ws-mini-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.ws-mini-top b{font-family:'Fraunces';font-size:15px}
+.ws-mini-bar{height:6px;background:#E7ECE7;border-radius:999px;overflow:hidden}
+.ws-mini-bar i{display:block;height:100%}
+
+.view{display:none}.view.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sec-gap{margin-top:22px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.chart-box{position:relative;height:240px}
+.legend-inline{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)}
+.legend-inline i{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+/* ===== ACCESS GATE + COMMERCIAL FOOTER ===== */
+#gate{position:fixed;inset:0;z-index:1000;background:var(--ink);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{background:var(--card);border-radius:18px;box-shadow:0 30px 80px -30px rgba(0,0,0,.6);padding:38px 34px;width:100%;max-width:380px;text-align:center}
+.gate-brand{font-family:'Fraunces';font-weight:700;font-size:34px;letter-spacing:-.5px;margin-bottom:14px}
+.gate-brand .g{color:var(--amber)}.gate-brand .u1{color:var(--teal)}.gate-brand .u2{color:var(--lime-deep)}
+.gate-brand .l{color:#B69CE6}.gate-brand .b{color:#E68A3D}.gate-brand .a{color:#E68AA8}
+.gate-co{font-family:'Fraunces';font-size:19px;font-weight:600;color:var(--ink)}
+.gate-sub{font-family:'IBM Plex Mono';font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:6px 0 22px}
+.gate-card input{width:100%;padding:12px 14px;border:1px solid var(--line-2);border-radius:10px;font-size:15px;font-family:'Archivo';margin-bottom:12px;text-align:center}
+.gate-card input:focus{outline:2px solid var(--teal);border-color:var(--teal)}
+.gate-card .btn{width:100%;justify-content:center}
+#gate-msg{color:var(--sienna);font-family:'IBM Plex Mono';font-size:12px;min-height:18px;margin-top:10px}
+.gate-foot{margin-top:20px;font-size:11.5px;color:var(--muted);line-height:1.5}
+.gate-foot a{color:var(--teal);text-decoration:none;font-weight:600}
+.brand-foot{margin-top:30px;padding:18px 0 4px;border-top:1px solid var(--line-2);display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;text-align:center}
+.brand-foot .wm{font-family:'Fraunces';font-weight:700;font-size:18px;letter-spacing:-.3px}
+.brand-foot .wm .g{color:var(--amber)}.brand-foot .wm .u1{color:var(--teal)}.brand-foot .wm .u2{color:var(--lime-deep)}
+.brand-foot .wm .l{color:#B69CE6}.brand-foot .wm .b{color:#E68A3D}.brand-foot .wm .a{color:#E68AA8}
+.brand-foot .tag{font-size:12.5px;color:var(--muted)}
+.brand-foot a{color:var(--teal);text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-brand"><span class="g">g</span><span class="u1">u</span><span class="u2">u</span><span class="l">l</span><span class="b">b</span><span class="a">a</span></div>
+    <div class="gate-co">Good &amp; Fast Packaging Industry</div>
+    <div class="gate-sub">LEED v5 Certification Tracker</div>
+    <input id="gate-pw" type="password" placeholder="Enter access password" autocomplete="off"/>
+    <button class="btn" id="gate-go">Enter dashboard</button>
+    <div id="gate-msg"></div>
+    <div class="gate-foot"><a href="https://www.guulba.com" target="_blank" rel="noopener">guulba (www.guulba.com)</a> — technology for better performance</div>
+  </div>
+</div>
+<div class="app">
+  <!-- NAV -->
+  <aside class="nav">
+    <div class="brand"><span class="g">g</span><span class="u1">u</span><span class="u2">u</span><span class="l">l</span><span class="b">b</span><span class="a">a</span></div>
+    <div class="nav-sub">LEED v5 Tracker</div>
+    <button class="on" data-v="birds"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6"/></svg>Birds-Eye</button>
+    <button data-v="score"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>Scorecard</button>
+    <button data-v="road"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7M5 5v14"/></svg>Roadmap</button>
+    <button data-v="depts"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4zm6 0a4 4 0 10-3-1.35"/></svg>Departments</button>
+    <button data-v="workspace"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7l-2 2-1-1"/></svg>Task Desk</button>
+    <button data-v="docs"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>Evidence</button>
+    <button data-v="cost"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Cost &amp; ROI</button>
+    <button data-v="entry"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>Log Progress</button>
+    <div class="spacer"></div>
+    <div class="nav-foot">
+      SHRM · Sustainability Cell<br/>
+      <a href="https://www.guulba.com" target="_blank" rel="noopener">www.guulba.com</a>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="facility">
+      <div>
+        <div class="eyebrow">Green Factory Programme · GNF Packaging</div>
+        <h1>Good &amp; Fast Packaging Industry <span>— LEED Readiness</span></h1>
+        <div class="asof" id="asof">As of —</div>
+      </div>
+      <div style="text-align:right">
+        <span class="sys-chip">Rating system <b>LEED v5 BD+C</b></span>
+        <div class="asof">Yarn Dyeing · Accessories (elastic, label) · Printing &amp; Packaging</div>
+      </div>
+    </div>
+    <div class="rule"></div>
+
+    <!-- ============ BIRDS-EYE ============ -->
+    <section class="view on" id="v-birds">
+      <div class="kpis" style="margin-bottom:22px">
+        <div class="kpi"><div class="v" id="k-readiness">—<small>%</small></div><div class="k">Portfolio readiness (weighted)</div><div class="d up" id="k-readiness-d">▲ on track</div></div>
+        <div class="kpi"><div class="v" id="k-secured">—<small>pts</small></div><div class="k">Avg points secured / division</div><div class="d" id="k-secured-d">of 110</div></div>
+        <div class="kpi"><div class="v" id="k-prereq">—<small>/14</small></div><div class="k">Prerequisites cleared</div><div class="d warn" id="k-prereq-d">across divisions</div></div>
+        <div class="kpi"><div class="v" id="k-docs">—<small>%</small></div><div class="k">Evidence compiled</div><div class="d" id="k-docs-d">for Arc upload</div></div>
+      </div>
+
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-h"><h3>Certification Ladder</h3><span class="hint">points toward each threshold</span></div>
+          <div class="ladder-wrap" id="ladder">
+            <div class="ladder-grid" id="ladder-grid"></div>
+          </div>
+          <div class="ladder-legend">
+            <span class="lk"><i class="sec"></i>Secured</span>
+            <span class="lk"><i class="prog"></i>In progress</span>
+            <span class="lk"><i class="open"></i>Open</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h"><h3>v5 impact areas</h3><span class="hint">share of secured points</span></div>
+          <div class="impact" id="impact"></div>
+          <div class="legend-inline" style="margin-top:18px">
+            Every v5 credit maps to one of three impact areas. Decarbonization carries ~50% of available points, so Energy &amp; Atmosphere is where the programme is won or lost — especially for water- and steam-intensive yarn dyeing.
+          </div>
+        </div>
+      </div>
+
+      <div class="card sec-gap">
+        <div class="card-h"><h3>Points trajectory by division</h3><span class="hint">secured vs. forecast at submission</span></div>
+        <div class="chart-box"><canvas id="trajChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ============ SCORECARD ============ -->
+    <section class="view" id="v-score">
+      <div class="eyebrow-s">Live scorecard — switch division</div>
+      <div class="tabsub" id="div-tabs"></div>
+      <div id="scorecard"></div>
+    </section>
+
+    <!-- ============ ROADMAP ============ -->
+    <section class="view" id="v-road">
+      <div class="eyebrow-s">Certification lifecycle — achieve, then maintain</div>
+      <div class="road-split" id="road-split">
+        <button class="on" data-r="ach">Achieve · 8 phases</button>
+        <button data-r="mnt">Maintain · recurring cycle</button>
+      </div>
+      <div id="roadmap"></div>
+      <div id="maintenance" style="display:none"></div>
+    </section>
+
+    <!-- ============ DEPARTMENTS ============ -->
+    <section class="view" id="v-depts">
+      <div class="eyebrow-s">Department accountability — who owns which LEED requirement</div>
+      <div class="dept-summary">
+        <div class="card">
+          <div class="card-h"><h3>Completion by department</h3><span class="hint">weighted by task status</span></div>
+          <div class="chart-box" style="height:280px"><canvas id="deptChart"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>How to read this</h3></div>
+          <div class="legend-inline" style="font-size:12.8px;line-height:1.6;color:var(--muted)">
+            Every LEED prerequisite and credit is assigned to one accountable department. Each task is tagged <b>Achieve</b> (one-time, to win certification) or <b>Maintain</b> (recurring, to keep it). Department completion is weighted: a finished task counts full, an in-progress task counts half.
+          </div>
+          <div class="arc5" style="margin-top:16px">
+            <span><span class="dot done" style="display:inline-block;margin:0 5px 0 0"></span>Done</span>
+            <span><span class="dot prog" style="display:inline-block;margin:0 5px 0 0"></span>In progress</span>
+            <span><span class="dot open" style="display:inline-block;margin:0 5px 0 0"></span>Not started</span>
+            <span><span class="dot gap" style="display:inline-block;margin:0 5px 0 0"></span>Blocked</span>
+          </div>
+        </div>
+      </div>
+      <div class="dept-grid" id="dept-grid"></div>
+    </section>
+
+    <!-- ============ TASK DESK (CRUD) ============ -->
+    <section class="view" id="v-workspace">
+      <div class="eyebrow-s">Task Desk — your team updates status here; it shows up everywhere</div>
+
+      <!-- gate -->
+      <div class="card" id="ws-gate">
+        <div class="card-h"><h3>Sign in to update tasks</h3><span class="hint">two-tier access</span></div>
+        <div class="form-grid">
+          <div class="field"><label>I am</label>
+            <select id="ws-role">
+              <option value="dept">A department / team (edit our tasks)</option>
+              <option value="mgmt">Management (view all, read-only)</option>
+            </select></div>
+          <div class="field" id="ws-deptwrap"><label>Department</label><select id="ws-dept"></select></div>
+          <div class="field" style="grid-column:1/-1"><label>Access PIN</label><input id="ws-pin" type="password" placeholder="enter PIN" /></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap">
+          <button class="btn" id="ws-unlock">Unlock</button>
+          <span id="ws-gatemsg" class="mono" style="font-size:12px;color:var(--sienna)"></span>
+        </div>
+        <div class="note" style="margin-top:16px">Demo PINs — team editors: <b>team2026</b> · management: <b>admin2026</b>. Swap these for real per-department PINs in <span class="config-pill">PINS</span> at the top of the page script. PINs are checked as SHA-256 hashes, never stored in clear text.</div>
+      </div>
+
+      <!-- editor (department) -->
+      <div id="ws-editor" style="display:none">
+        <div class="ws-bar">
+          <div class="ws-who"><span class="dept-badge" id="ws-badge"></span>
+            <span><h4 id="ws-name"></h4><span class="lead" id="ws-lead"></span></span></div>
+          <div class="ws-right">
+            <span class="ws-pct"><b id="ws-pct">0</b>% complete</span>
+            <span id="ws-state" class="config-pill">backend: demo</span>
+            <button class="btn ghost" id="ws-logout">Switch</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="ws-table" id="ws-table"></table>
+        </div>
+        <div class="ws-foot">
+          <button class="btn ghost" id="ws-add">+ Add task</button>
+          <div style="flex:1"></div>
+          <span id="ws-savemsg" class="mono" style="font-size:12px;color:var(--lime-deep)"></span>
+          <button class="btn" id="ws-save">Save &amp; publish</button>
+        </div>
+        <div class="legend-inline" style="margin-top:14px;font-size:12px">Edit status inline, revise the text, add or delete rows — then <b>Save &amp; publish</b>. The Departments board, the completion chart and the analytics pipeline all read the same record, so everyone sees the update.</div>
+      </div>
+
+      <!-- management read-only -->
+      <div id="ws-mgmt" style="display:none">
+        <div class="ws-bar">
+          <div class="ws-who"><span class="dept-badge" style="background:var(--ink)">ALL</span>
+            <span><h4>Management view</h4><span class="lead">consolidated, read-only</span></span></div>
+          <div class="ws-right"><button class="btn ghost" id="ws-logout2">Switch</button></div>
+        </div>
+        <div class="card"><div class="chart-box" style="height:300px"><canvas id="wsChart"></canvas></div></div>
+        <div id="ws-mgmt-list" style="margin-top:18px"></div>
+      </div>
+    </section>
+
+    <!-- ============ DOCS ============ -->
+    <section class="view" id="v-docs">
+      <div class="eyebrow-s">Evidence register — readiness for Arc / LEED Online upload</div>
+      <div id="docs"></div>
+    </section>
+
+    <!-- ============ COST ============ -->
+    <section class="view" id="v-cost">
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-h"><h3>Certification fees (USGBC / GBCI)</h3><span class="hint">indicative, USD</span></div>
+          <table class="cost-table" id="fee-table"></table>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Capex strategies &amp; payback</h3><span class="hint">per division focus</span></div>
+          <table class="cost-table" id="capex-table"></table>
+        </div>
+      </div>
+      <div class="card sec-gap">
+        <div class="card-h"><h3>The business case</h3></div>
+        <div class="legend-inline" style="font-size:13px;line-height:1.65;color:var(--muted)">
+          Bangladesh hosts 270 LEED-certified apparel factories — more top-rated green factories than any other country. Certification is no longer a badge: green-certified plants attract long-term sourcing commitments, stronger price discussions, and access to sustainability-linked loans and concessional green credit. For yarn dyeing, the water-recycling and ETP investments that earn Water Efficiency points also cut freshwater intake and effluent-treatment cost, so the credit chase and the cost-down agenda point the same direction.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DATA ENTRY ============ -->
+    <section class="view" id="v-entry">
+      <div class="grid g2">
+        <div class="card">
+          <div class="card-h"><h3>Log a credit update</h3><span class="config-pill" id="cfg-state">backend: demo</span></div>
+          <div class="form-grid">
+            <div class="field"><label>Division</label><select id="f-div"></select></div>
+            <div class="field"><label>Credit ID</label><input id="f-cid" placeholder="e.g. WEc2" /></div>
+            <div class="field"><label>Status</label><select id="f-status"><option>Secured</option><option>In progress</option><option>Open</option><option>Gap / blocked</option></select></div>
+            <div class="field"><label>Points claimed</label><input id="f-pts" type="number" min="0" max="20" placeholder="0" /></div>
+            <div class="field" style="grid-column:1/-1"><label>Owner</label><input id="f-owner" placeholder="Responsible person / team" /></div>
+            <div class="field" style="grid-column:1/-1"><label>Note / evidence link</label><textarea id="f-note" rows="2" placeholder="Drive link to evidence, measurement, or commissioning report"></textarea></div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:18px;align-items:center;flex-wrap:wrap">
+            <button class="btn" id="f-submit">Save update</button>
+            <button class="btn ghost" id="f-demo">Apply to dashboard (demo)</button>
+            <span id="f-msg" class="mono" style="font-size:12px;color:var(--lime-deep)"></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Connect the backend</h3></div>
+          <div class="note">
+            <b>Wire to Google Sheets in 2 steps.</b> 1) Deploy <span class="config-pill">apps-script/Code.gs</span> as a Web App (Execute as: Me · Access: Anyone). 2) Paste the Web-App URL into <span class="config-pill">CONFIG.API</span> at the top of the page script. Until then the form runs in demo mode and updates the in-memory dashboard only.
+          </div>
+          <div style="margin-top:16px">
+            <div class="field"><label>Apps Script Web-App URL</label><input id="f-api" placeholder="https://script.google.com/macros/s/…/exec" /></div>
+            <button class="btn ghost" id="f-saveapi" style="margin-top:12px">Use this endpoint</button>
+          </div>
+          <div class="legend-inline" style="margin-top:18px;font-size:12px">
+            The Python pipeline in <span class="config-pill">pipeline/leed_pipeline.py</span> reads the same sheet nightly via GitHub Actions, recomputes weighted readiness &amp; threshold gaps, and writes <span class="config-pill">data/leed_state.json</span> back to the repo — this dashboard then loads from that file on Pages.
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer class="brand-foot">
+      <span class="wm"><span class="g">g</span><span class="u1">u</span><span class="u2">u</span><span class="l">l</span><span class="b">b</span><span class="a">a</span></span>
+      <span class="tag"><a href="https://www.guulba.com" target="_blank" rel="noopener">(www.guulba.com)</a> — technology for better performance</span>
+    </footer>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG — paste your Apps Script Web-App URL here to go live
+   ============================================================ */
+const CONFIG = {
+  API: "",                                    // paste your Apps Script /exec URL to go live
+  STATE_JSON: "data/commercial_state.json",   // written by the Python pipeline
+  GATE_HASH: "6caf2fb9e283e05f62a6b360242b4b7691185caedbd63bb73531764fe2fcb562" // SHA-256 of dashboard password (demo: goodandfast2026)
+};
+
+/* ---------- LEED v5 BD+C category model (caps ≈ 110) ---------- */
+const CATS = [
+  {tag:"IP", name:"Integrative Process, Planning & Assessments", cap:9,
+    credits:[
+      {id:"IPp1", n:"Climate Resilience Assessment", req:true},
+      {id:"IPp2", n:"Human Impact Assessment", req:true},
+      {id:"IPp3", n:"Carbon Assessment", req:true},
+      {id:"IPc1", n:"Integrative Design Process", cap:3},
+      {id:"IPc2", n:"Climate Resilience Design", cap:6}]},
+  {tag:"LT", name:"Location & Transportation", cap:15,
+    credits:[
+      {id:"LTc1", n:"Compact & Connected Development", cap:8},
+      {id:"LTc2", n:"Transportation Demand Management", cap:4},
+      {id:"LTc3", n:"Electric Vehicles", cap:3}]},
+  {tag:"SS", name:"Sustainable Sites", cap:10,
+    credits:[
+      {id:"SSp1", n:"Construction Activity Pollution Prevention", req:true},
+      {id:"SSc1", n:"Enhanced Resilient Site Design", cap:4},
+      {id:"SSc2", n:"Rainwater Management", cap:3},
+      {id:"SSc3", n:"Heat Island Reduction", cap:2},
+      {id:"SSc4", n:"Light-Pollution & Bird-Collision Reduction", cap:1}]},
+  {tag:"WE", name:"Water Efficiency", cap:11,
+    credits:[
+      {id:"WEp1", n:"Water Metering & Reporting", req:true},
+      {id:"WEp2", n:"Minimum Water Efficiency", req:true},
+      {id:"WEc1", n:"Outdoor Water Use Reduction", cap:2},
+      {id:"WEc2", n:"Indoor Water Use Reduction", cap:6},
+      {id:"WEc3", n:"Process & Cooling Tower Water", cap:3}]},
+  {tag:"EA", name:"Energy & Atmosphere", cap:33,
+    credits:[
+      {id:"EAp1", n:"Operational Carbon Projection & Decarb Plan", req:true},
+      {id:"EAp2", n:"Minimum Energy Efficiency", req:true},
+      {id:"EAp3", n:"Fundamental Commissioning", req:true},
+      {id:"EAp4", n:"Fundamental Refrigerant Management", req:true},
+      {id:"EAc1", n:"Electrification", cap:5},
+      {id:"EAc2", n:"Enhanced Commissioning", cap:4},
+      {id:"EAc3", n:"Enhanced Energy Efficiency", cap:10},
+      {id:"EAc4", n:"Renewable Energy", cap:6},
+      {id:"EAc5", n:"Grid-Interactive & Peak Loads", cap:5},
+      {id:"EAc6", n:"Enhanced Refrigerant Management", cap:3}]},
+  {tag:"MR", name:"Materials & Resources", cap:13,
+    credits:[
+      {id:"MRp1", n:"Planning for Zero Waste Operations", req:true},
+      {id:"MRc1", n:"Building Life-Cycle Impact Reduction", cap:2},
+      {id:"MRc2", n:"Reduce Embodied Carbon", cap:6},
+      {id:"MRc3", n:"Optimized Building Products", cap:3},
+      {id:"MRc4", n:"Construction & Demolition Waste", cap:2}]},
+  {tag:"EQ", name:"Indoor Environmental Quality", cap:16,
+    credits:[
+      {id:"EQp1", n:"Minimum IAQ Performance", req:true},
+      {id:"EQp2", n:"Environmental Tobacco Smoke Control", req:true},
+      {id:"EQc1", n:"Enhanced IAQ Strategies", cap:3},
+      {id:"EQc2", n:"Low-Emitting Materials", cap:4},
+      {id:"EQc3", n:"Thermal Comfort", cap:3},
+      {id:"EQc4", n:"Daylight & Quality Views", cap:4},
+      {id:"EQc5", n:"Acoustic Performance", cap:2}]},
+  {tag:"IN", name:"Innovation", cap:6,
+    credits:[
+      {id:"INc1", n:"Innovation Strategies", cap:5},
+      {id:"INc2", n:"LEED Accredited Professional", cap:1}]},
+  {tag:"RP", name:"Regional Priority", cap:4,
+    credits:[{id:"RPc1", n:"Regional Priority Credits", cap:4}]}
+];
+
+/* impact-area weighting per category (Decarbonization / Quality of Life / Ecology) */
+const IMPACT = {EA:"decarb",MR:"decarb",LT:"decarb",WE:"ecology",SS:"ecology",EQ:"quality",IP:"quality",IN:"quality",RP:"ecology"};
+
+/* ---------- deterministic demo state per division ---------- */
+/* secured / progress points per category tag */
+const DIVISIONS = {
+  "Yarn Dyeing":{target:"Gold", tgtPts:60, color:"#1B8F86", sec:{}, prog:{}, prereq:0, prereqTot:14, docs:0},
+  "Garments Accessories":{target:"Gold", tgtPts:60, color:"#B6E61E", sec:{}, prog:{}, prereq:0, prereqTot:14, docs:0},
+  "Printing & Packaging":{target:"Gold", tgtPts:60, color:"#E6A12E", sec:{}, prog:{}, prereq:0, prereqTot:14, docs:0}
+};
+
+const sum = o => Object.values(o).reduce((a,b)=>a+b,0);
+const fmt = n => n.toLocaleString();
+
+/* ---------- BIRDS-EYE ---------- */
+function renderBirds(){
+  document.getElementById('asof').textContent = "As of "+new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  // KPIs
+  const divs=Object.entries(DIVISIONS);
+  const readiness=Math.round(divs.reduce((a,[,d])=>a+Math.min(100,(sum(d.sec)/d.tgtPts)*100),0)/divs.length);
+  const avgSec=Math.round(divs.reduce((a,[,d])=>a+sum(d.sec),0)/divs.length);
+  const prereq=divs.reduce((a,[,d])=>a+d.prereq,0), prereqTot=divs.reduce((a,[,d])=>a+d.prereqTot,0);
+  const docs=Math.round(divs.reduce((a,[,d])=>a+d.docs,0)/divs.length);
+  document.getElementById('k-readiness').innerHTML=readiness+'<small>%</small>';
+  document.getElementById('k-secured').innerHTML=avgSec+'<small>pts</small>';
+  document.getElementById('k-prereq').innerHTML=prereq+'<small>/'+prereqTot+'</small>';
+  document.getElementById('k-prereq-d').textContent=(prereqTot-prereq)+' open across divisions';
+  document.getElementById('k-docs').innerHTML=docs+'<small>%</small>';
+
+  // ladder
+  const wrap=document.getElementById('ladder'); wrap.querySelectorAll('.col').forEach(e=>e.remove());
+  const grid=document.getElementById('ladder-grid'); grid.innerHTML='';
+  const MAX=110, H=260;
+  [["Platinum",80,"plat"],["Gold",60,""],["Silver",50,""],["Certified",40,""]].forEach(([n,p,c])=>{
+    const t=document.createElement('div'); t.className='thr '+c;
+    t.style.bottom=(p/MAX*H)+'px'; t.innerHTML=`<span>${n} · ${p}</span>`; grid.appendChild(t);
+  });
+  divs.forEach(([name,d])=>{
+    const s=sum(d.sec), pr=sum(d.prog);
+    const col=document.createElement('div'); col.className='col';
+    col.innerHTML=`
+      <div class="col-score">${s}<small>+${pr}</small></div>
+      <div class="col-bar" style="height:${H}px">
+        <div class="seg prog" style="height:${(pr/MAX*H)}px"></div>
+        <div class="seg sec" style="height:${(s/MAX*H)}px"></div>
+      </div>
+      <div class="col-name">${name}</div>
+      <div class="col-tgt">target ${d.target} · ${d.tgtPts}+</div>`;
+    wrap.appendChild(col);
+  });
+
+  // impact areas (aggregate secured across divisions)
+  const imp={decarb:0,quality:0,ecology:0};
+  divs.forEach(([,d])=>Object.entries(d.sec).forEach(([tag,v])=>imp[IMPACT[tag]]+=v));
+  const impTot=sum(imp)||1;
+  const impMeta=[["Decarbonization","decarb","var(--ink)"],["Quality of Life","quality","var(--teal)"],["Ecological Conservation","ecology","var(--lime-deep)"]];
+  const el=document.getElementById('impact'); el.innerHTML='';
+  impMeta.forEach(([label,key,col])=>{
+    const pct=Math.round(imp[key]/impTot*100);
+    el.innerHTML+=`<div class="imp-row"><div class="imp-top"><b>${label}</b><span class="mono">${imp[key]} pts · ${pct}%</span></div>
+      <div class="track"><i style="width:${pct}%;background:${col}"></i></div></div>`;
+  });
+
+  // trajectory chart
+  trajChart();
+}
+
+let _traj;
+function trajChart(){
+  const ctx=document.getElementById('trajChart'); if(_traj)_traj.destroy();
+  const labels=Object.keys(DIVISIONS);
+  _traj=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:'Secured',data:labels.map(l=>sum(DIVISIONS[l].sec)),backgroundColor:'#B6E61E',borderRadius:6,stack:'s'},
+    {label:'Forecast at submission',data:labels.map(l=>sum(DIVISIONS[l].prog)),backgroundColor:'#EFC76F',borderRadius:6,stack:'s'},
+  ]},options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{labels:{font:{family:'Archivo'},usePointStyle:true,pointStyle:'rectRounded'}},
+      tooltip:{callbacks:{footer:items=>{const l=items[0].label;return 'Target: '+DIVISIONS[l].target+' ('+DIVISIONS[l].tgtPts+'+)'}}}},
+    scales:{x:{grid:{display:false},ticks:{font:{family:'Archivo',weight:'600'}}},
+      y:{stacked:true,max:110,grid:{color:'#E7ECE7'},ticks:{font:{family:'IBM Plex Mono'}},
+        title:{display:true,text:'points / 110'}},
+      x2:{display:false}},
+    // threshold lines
+  },plugins:[{id:'thr',afterDraw(c){const{ctx,chartArea:a,scales:{y}}=c;[[40,'Certified'],[60,'Gold'],[80,'Platinum']].forEach(([p,t])=>{const yy=y.getPixelForValue(p);ctx.save();ctx.strokeStyle=p===80?'#9BB7C9':'#C3CEC3';ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(a.left,yy);ctx.lineTo(a.right,yy);ctx.stroke();ctx.fillStyle='#8A998E';ctx.font='10px "IBM Plex Mono"';ctx.fillText(t,a.left+4,yy-4);ctx.restore()})}}]});
+  for(const k in DIVISIONS)DIVISIONS[k].sec.__=0; // noop keep shape
+}
+
+/* ---------- SCORECARD ---------- */
+let curDiv="Yarn Dyeing";
+function renderDivTabs(){
+  const t=document.getElementById('div-tabs'); t.innerHTML='';
+  Object.keys(DIVISIONS).forEach(name=>{
+    const b=document.createElement('button'); b.textContent=name; if(name===curDiv)b.className='on';
+    b.onclick=()=>{curDiv=name;renderDivTabs();renderScore()}; t.appendChild(b);
+  });
+}
+function renderScore(){
+  const d=DIVISIONS[curDiv], host=document.getElementById('scorecard'); host.innerHTML='';
+  CATS.forEach(cat=>{
+    const secured=d.sec[cat.tag]||0, prog=d.prog[cat.tag]||0;
+    const pct=Math.round(secured/cat.cap*100);
+    const wrap=document.createElement('div'); wrap.className='cat';
+    const credits=cat.credits.map(c=>{
+      let pill;
+      if(c.req){pill = d.prereq>=d.prereqTot || cat.tag!=='IP' ? '<span class="pill p-sec">cleared</span>' : '<span class="pill p-prog">pending</span>';
+        return `<div class="credit"><span class="cid">${c.id}</span><span class="cn">${c.n}</span><span class="req">prereq</span>${pill}</div>`;}
+      // distribute secured/prog visually
+      return `<div class="credit"><span class="cid">${c.id}</span><span class="cn">${c.n}</span><span class="cpts">·/${c.cap}</span></div>`;
+    }).join('');
+    wrap.innerHTML=`
+      <div class="cat-h">
+        <span class="cat-tag">${cat.tag}</span>
+        <span class="cat-name">${cat.name}</span>
+        <span class="cat-bar"><i style="width:${pct}%"></i></span>
+        <span class="cat-pts">${secured}<small>/${cat.cap}</small> ${prog?'<small style="color:#9A6912">+'+prog+'</small>':''}</span>
+        <svg class="cat-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5l7 7-7 7"/></svg>
+      </div>
+      <div class="cat-body">${credits}</div>`;
+    wrap.querySelector('.cat-h').onclick=()=>wrap.classList.toggle('open');
+    host.appendChild(wrap);
+  });
+}
+
+/* ---------- ROADMAP ---------- */
+const PHASES=[
+  {n:1,s:"todo",t:"Define scope & rating system",when:"Not started",d:"Confirm LEED v5 BD+C for each building and verify Minimum Program Requirements: ≥1,000 ft² gross floor area, a reasonable site boundary, and an accurate scope declaration.",tasks:["Rating system","MPR check","Boundaries"]},
+  {n:2,s:"todo",t:"Assemble team & register in Arc",when:"Not started",d:"Name the owner, a LEED AP, MEP/architect and the sustainability cell, then register each project on the Arc platform.",tasks:["LEED AP","Arc registration","Credit owners"]},
+  {n:3,s:"todo",t:"Mandatory assessments & integrative process",when:"Not started",d:"Complete the three new v5 prerequisites — Carbon Assessment, Operational Carbon Projection & Decarbonization Plan, plus the Human Impact and Climate Resilience assessments — via an early integrative charrette.",tasks:["Carbon","Resilience","Human impact","Energy model"]},
+  {n:4,s:"todo",t:"Lock the credit strategy & scorecard",when:"Not started",d:"Allocate credits to owners and set the target level per business line. Prioritise Water Efficiency and Energy & Atmosphere where the water-/steam-intensive processes sit.",tasks:["Scorecard","Targets","Gap list"]},
+  {n:5,s:"todo",t:"Design & implement measures",when:"Not started",d:"Build and operate the strategies: rainwater harvesting, water recycling & ETP, solar PV, HVLS fans, daylighting, low-emitting materials, automatic chemical dispensing, BMS.",tasks:["Solar PV","Water recycling","Daylight & IAQ","BMS"]},
+  {n:6,s:"todo",t:"Compile evidence in Arc",when:"Not started",d:"Assemble measurements, commissioning reports, product EPDs and policies for every attempted credit. Track readiness on the Evidence tab.",tasks:["Commissioning","EPDs","Metering"]},
+  {n:7,s:"todo",t:"GBCI review — round 1 & 2",when:"Not started",d:"Submit for GBCI's two-round review: preliminary review, respond to comments, then final review.",tasks:["Preliminary","Comments","Final"]},
+  {n:8,s:"todo",t:"Certification & green-finance",when:"Not started",d:"Receive the certificate, publicise to buyers, and convert the rating into sourcing commitments and sustainability-linked / green loans.",tasks:["Award","Buyer comms","Green loan"]}
+];
+function renderRoad(){
+  const host=document.getElementById('roadmap'); host.innerHTML='';
+  PHASES.forEach(p=>{
+    const el=document.createElement('div'); el.className='phase '+p.s;
+    el.innerHTML=`<div class="phase-dot">${p.s==='done'?'✓':p.n}</div>
+      <div class="phase-card">
+        <div class="ph-top"><h4>${p.t}</h4><span class="when">${p.when}</span></div>
+        <p>${p.d}</p>
+        <div class="tasks">${p.tasks.map(t=>`<span class="tk ${p.s==='done'?'ok':''}">${t}</span>`).join('')}</div>
+      </div>`;
+    host.appendChild(el);
+  });
+}
+
+/* ---------- DOCS ---------- */
+const DOCS=[
+  ["Carbon Assessment report","IPp3 · prereq",0,"#C7522A"],
+  ["Operational Carbon Projection & Decarbonization Plan","EAp1 · prereq",0,"#C7522A"],
+  ["Human Impact Assessment","IPp2 · prereq",0,"#C7522A"],
+  ["Climate Resilience Assessment","IPp1 · prereq",0,"#C7522A"],
+  ["Whole-building energy model","EAc3",0,"#C7522A"],
+  ["Water metering & balance (process + cooling)","WEp1 / WEc3",0,"#C7522A"],
+  ["Effluent Treatment Plant validation","WEc2",0,"#C7522A"],
+  ["Solar PV / renewable energy contract","EAc4",0,"#C7522A"],
+  ["Product EPDs & embodied-carbon LCA","MRc2",0,"#C7522A"],
+  ["Low-emitting materials declarations","EQc2",0,"#C7522A"],
+  ["Commissioning (Cx) reports","EAp3 / EAc2",0,"#C7522A"],
+  ["Zero-waste operations plan","MRp1 · prereq",0,"#C7522A"]
+];
+function renderDocs(){
+  const host=document.getElementById('docs'); host.innerHTML='';
+  DOCS.forEach(([n,m,pct,col])=>{
+    const st = pct>=80?'p-sec':pct>=50?'p-prog':'p-gap';
+    const lbl= pct>=80?'ready':pct>=50?'drafting':'gap';
+    host.innerHTML+=`<div class="doc-row">
+      <span class="dn">${n}</span><span class="dmeta">${m}</span>
+      <span class="dbar"><i style="width:${pct}%;background:${col}"></i></span>
+      <span class="mono" style="font-size:11.5px;width:34px;text-align:right">${pct}%</span>
+      <span class="pill ${st}">${lbl}</span></div>`;
+  });
+}
+
+/* ---------- COST ---------- */
+const FEES=[
+  ["Project registration (Arc)","1,500"],
+  ["Certification review — BD+C (per building, est.)","3,000 – 27,500"],
+  ["LEED AP / consultant support (per project)","8,000 – 25,000"],
+  ["Energy modelling & commissioning","6,000 – 18,000"]
+];
+const CAPEX=[
+  ["Solar PV (Energy)","High","2–4 yrs","EAc4"],
+  ["Water recycling + ETP upgrade (Yarn Dyeing)","High","3–5 yrs","WEc2/3"],
+  ["LED + HVLS fans + daylighting","Medium","1–2 yrs","EAc3/EQc4"],
+  ["BMS & sub-metering","Medium","2–3 yrs","EAc5"],
+  ["Low-emitting materials & EPD sourcing","Low","Quality gain","MRc2/EQc2"]
+];
+function renderCost(){
+  const f=document.getElementById('fee-table');
+  f.innerHTML=`<thead><tr><th>Item</th><th style="text-align:right">USD</th></tr></thead><tbody>${
+    FEES.map(([a,b])=>`<tr><td>${a}</td><td class="num">${b}</td></tr>`).join('')
+  }</tbody><tfoot><tr><td>Typical all-in, one building</td><td class="num">≈ 20k – 70k</td></tr></tfoot>`;
+  const c=document.getElementById('capex-table');
+  c.innerHTML=`<thead><tr><th>Strategy</th><th>Capex</th><th>Payback</th><th style="text-align:right">Credit</th></tr></thead><tbody>${
+    CAPEX.map(([a,b,c2,d])=>`<tr><td>${a}</td><td>${b}</td><td>${c2}</td><td class="num">${d}</td></tr>`).join('')
+  }</tbody>`;
+}
+
+/* ---------- DATA ENTRY ---------- */
+function wireEntry(){
+  const api=document.getElementById('f-api'), state=document.getElementById('cfg-state');
+  if(CONFIG.API){state.textContent='backend: live';api.value=CONFIG.API}
+  document.getElementById('f-saveapi').onclick=()=>{CONFIG.API=api.value.trim();state.textContent=CONFIG.API?'backend: live':'backend: demo';msg('Endpoint set.')};
+  document.getElementById('f-submit').onclick=submit;
+  document.getElementById('f-demo').onclick=applyDemo;
+  function msg(t){const m=document.getElementById('f-msg');m.textContent=t;setTimeout(()=>m.textContent='',2600)}
+  async function submit(){
+    const payload={division:val('f-div'),credit:val('f-cid'),status:val('f-status'),points:+val('f-pts')||0,owner:val('f-owner'),note:val('f-note'),ts:new Date().toISOString()};
+    if(!CONFIG.API){msg('Demo mode — set endpoint to persist.');applyDemo();return}
+    try{await fetch(CONFIG.API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)});msg('Saved to Sheet ✓');applyDemo();}
+    catch(e){msg('Network error — saved locally.')}
+  }
+  function applyDemo(){
+    const div=val('f-div'),tag=(val('f-cid').match(/^[A-Za-z]{2}/)||['EA'])[0].toUpperCase(),pts=+val('f-pts')||0,st=val('f-status');
+    if(DIVISIONS[div]&&pts){
+      if(st==='Secured'){DIVISIONS[div].sec[tag]=(DIVISIONS[div].sec[tag]||0)+pts; if(DIVISIONS[div].prog[tag])DIVISIONS[div].prog[tag]=Math.max(0,DIVISIONS[div].prog[tag]-pts);}
+      else if(st==='In progress'){DIVISIONS[div].prog[tag]=(DIVISIONS[div].prog[tag]||0)+pts;}
+      renderBirds();renderScore();msg('Dashboard updated ✓');
+    } else msg('Enter a credit ID + points.');
+  }
+  const val=id=>document.getElementById(id).value.trim();
+}
+
+/* ---------- optionally hydrate from pipeline JSON ---------- */
+async function hydrate(){
+  try{
+    const r=await fetch(CONFIG.STATE_JSON,{cache:'no-store'}); if(!r.ok)return;
+    const j=await r.json();
+    if(j&&j.divisions){for(const k in j.divisions)if(DIVISIONS[k])Object.assign(DIVISIONS[k],j.divisions[k]);}
+  }catch(e){/* demo data stands */}
+}
+
+/* ---------- DEPARTMENTS: LEED requirement ownership ---------- */
+const DEPTS=[
+  {name:"Engineering & Utilities", code:"ENG", lead:"Head of Engineering", color:"#0A2E25", tasks:[]},
+  {name:"EHS & Compliance", code:"EHS", lead:"EHS Manager", color:"#1B8F86", tasks:[]},
+  {name:"Civil & Projects", code:"CIV", lead:"Project Engineer", color:"#7FA80F", tasks:[]},
+  {name:"Procurement & Supply Chain", code:"PRC", lead:"Procurement Lead", color:"#C7522A", tasks:[]},
+  {name:"HR / SHRM & Admin", code:"HR", lead:"AGM SHRM", color:"#B69CE6", tasks:[]},
+  {name:"Sustainability Cell / PMO", code:"SUS", lead:"Sustainability Lead", color:"#E6A12E", tasks:[]},
+  {name:"Finance", code:"FIN", lead:"Head of Finance", color:"#1B7F79", tasks:[]},
+  {name:"IT & Data", code:"IT", lead:"IT Lead", color:"#5C6E63", tasks:[]}
+];
+const W={done:1,prog:.5,open:0,gap:0};
+const deptPct=d=>d.tasks.length?Math.round(d.tasks.reduce((a,t)=>a+W[t.s],0)/d.tasks.length*100):0;
+// give every task a stable id (DEPTCODE-NN) so update/delete target the right row
+DEPTS.forEach(d=>d.tasks.forEach((t,i)=>{if(!t.id)t.id=d.code+'-'+String(i+1).padStart(2,'0')}));
+const ST=[["done","Done"],["prog","In progress"],["open","Open"],["gap","Blocked"]];
+const ST_LABEL=Object.fromEntries(ST);
+
+function renderDepts(){
+  const host=document.getElementById('dept-grid'); host.innerHTML='';
+  DEPTS.forEach(d=>{
+    const pct=deptPct(d);
+    const col = pct>=75?'var(--lime-deep)':pct>=45?'var(--amber)':'var(--sienna)';
+    const tasks=d.tasks.map(t=>`
+      <div class="task">
+        <span class="dot ${t.s}"></span>
+        <span class="tcid">${t.cid}</span>
+        <span class="tt">${t.t}${t.req?'<small>prerequisite — mandatory</small>':''}</span>
+        <span class="tph ${t.ph==='mnt'?'mnt':'ach'}">${t.ph==='mnt'?'maintain':'achieve'}</span>
+      </div>`).join('');
+    host.innerHTML+=`
+      <div class="dept">
+        <div class="dept-top">
+          <span class="dept-badge" style="background:${d.color}">${d.code}</span>
+          <span class="dept-meta"><h4>${d.name}</h4><span class="lead">${d.lead}</span></span>
+          <span class="dept-pct"><span class="n">${pct}<small style="font-size:13px">%</small></span><div class="l">complete</div></span>
+        </div>
+        <div class="dept-prog"><i style="width:${pct}%;background:${col}"></i></div>
+        <div class="dept-tasks">${d.tasks.length?tasks:'<div class="task" style="color:var(--muted-2);font-size:12.5px">No tasks yet \u2014 add them in Task Desk</div>'}</div>
+      </div>`;
+  });
+}
+
+let _dept;
+function deptChart(){
+  const ctx=document.getElementById('deptChart'); if(!ctx)return; if(_dept)_dept.destroy();
+  const sorted=[...DEPTS].sort((a,b)=>deptPct(b)-deptPct(a));
+  _dept=new Chart(ctx,{type:'bar',data:{labels:sorted.map(d=>d.code),
+    datasets:[{data:sorted.map(deptPct),backgroundColor:sorted.map(d=>{const p=deptPct(d);return p>=75?'#7FA80F':p>=45?'#E6A12E':'#C7522A'}),borderRadius:6}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>sorted[i[0].dataIndex].name,label:i=>i.raw+'% complete'}}},
+      scales:{x:{max:100,grid:{color:'#E7ECE7'},ticks:{font:{family:'IBM Plex Mono'},callback:v=>v+'%'}},
+        y:{grid:{display:false},ticks:{font:{family:'IBM Plex Mono',weight:'600'}}}}}});
+}
+
+/* ---------- MAINTENANCE CYCLE ---------- */
+const MAINT=[
+  {freq:"Continuous", t:"Operate to the design intent", who:"Engineering · EHS · IT",
+    p:"BD+C certification does not expire, but green performance can drift. Run the building to its commissioned set-points; the BMS and sub-meters watch energy, water and IAQ in real time so drift is caught and corrected early."},
+  {freq:"Annual · mandatory", t:"Upload performance data to Arc", who:"Sustainability Cell · IT",
+    p:"Enter 12 months of data across Arc's five categories to keep performance scoring live. Skipping the annual upload means the project is no longer considered certified.",
+    arc:["Energy","Water","Waste","Transportation","Human experience"]},
+  {freq:"Quarterly", t:"Internal performance review", who:"Sustainability Cell · Dept leads",
+    p:"Review the Arc score and department task board, close any blocked items, and re-balance capex. This dashboard is the standing agenda for that review."},
+  {freq:"Every 3 years", t:"Recertify under LEED v5 O+M", who:"Sustainability Cell · Finance",
+    p:"Register the building for O+M recertification in Arc (fee waived for previously certified projects) and claim the 5-point LEED Recertification credit in the Project Priorities category. v4 projects run a 5-year cycle."},
+  {freq:"Ongoing", t:"Convert the rating into value", who:"Finance · HR · Commercial",
+    p:"Use the live certification with buyers and lenders — long-term sourcing commitments, stronger price discussions, and access to sustainability-linked or concessional green loans."}
+];
+let roadMode="ach";
+function renderMaint(){
+  const host=document.getElementById('maintenance');
+  host.innerHTML=`
+    <div class="cycle-intro"><b>BD+C certifies the building once — O+M keeps it true.</b> A design certificate doesn't expire, but to prove sustained performance the building is tracked in Arc and recertified under LEED O+M on a three-year cycle. Miss the annual data upload and the certification lapses.</div>
+    <div class="cycle">${MAINT.map(m=>`
+      <div class="cyc-card">
+        <span class="freq">${m.freq}</span>
+        <h4>${m.t}</h4>
+        <p>${m.p}</p>
+        ${m.arc?`<div class="arc5">${m.arc.map(a=>`<span>${a}</span>`).join('')}</div>`:''}
+        <div class="who">Owner: ${m.who}</div>
+      </div>`).join('')}</div>`;
+}
+function wireRoadSplit(){
+  document.querySelectorAll('#road-split button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('#road-split button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); roadMode=b.dataset.r;
+    document.getElementById('roadmap').style.display = roadMode==='ach'?'block':'none';
+    document.getElementById('maintenance').style.display = roadMode==='mnt'?'block':'none';
+  });
+}
+
+/* ---------- TASK DESK: live CRUD, persisted, shown everywhere ---------- */
+// SHA-256 PIN hashes (demo: team2026 / admin2026). Replace with per-department PINs.
+const PINS={
+  _team:"9304f394b0a1094be8852558181308fe7434fc51c6cdb055dda6b70c9f1ea8a6",
+  _admin:"6051fc84a7a0d74c225fb18a496b09952da5642e60723ecae543298edd7d82d6"
+};
+const ST_CODE={Done:"done","In progress":"prog",Open:"open",Blocked:"gap"};
+async function sha256(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+
+// pull the live task board from the backend; fall back to the seeded defaults
+async function fetchTasks(){
+  if(!CONFIG.API)return;
+  try{
+    const r=await fetch(CONFIG.API+"?type=tasks",{cache:"no-store"}); if(!r.ok)return;
+    const j=await r.json(); if(!j||!j.tasks||!j.tasks.length)return;
+    const byDept={}; j.tasks.forEach(t=>(byDept[t.dept]=byDept[t.dept]||[]).push(t));
+    DEPTS.forEach(d=>{ if(byDept[d.code]) d.tasks=byDept[d.code].map(t=>(
+      {id:t.id,cid:t.credit||"—",t:t.task||"",s:ST_CODE[t.status]||"open",ph:t.phase||"ach",req:!!t.req})); });
+  }catch(e){/* seeded data stands */}
+}
+// persist one department's full task list (covers add / edit / delete)
+async function syncDept(code,by){
+  const d=DEPTS.find(x=>x.code===code);
+  const tasks=d.tasks.map(t=>({id:t.id,credit:t.cid,task:t.t,status:ST_LABEL[t.s],phase:t.ph,req:!!t.req}));
+  if(!CONFIG.API)return false;
+  try{await fetch(CONFIG.API,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},
+    body:JSON.stringify({action:"syncDept",dept:code,by:by||"",tasks})});return true;}
+  catch(e){return false;}
+}
+
+let wsRole=null, wsDept=null, wsTasks=[];
+function renderWsGate(){
+  const dd=document.getElementById("ws-dept");
+  if(dd&&!dd.options.length)DEPTS.forEach(d=>dd.add(new Option(d.name,d.code)));
+  const st=document.getElementById("ws-state"); if(st)st.textContent="backend: "+(CONFIG.API?"live":"demo");
+  const role=document.getElementById("ws-role"), wrap=document.getElementById("ws-deptwrap");
+  role.onchange=()=>{wrap.style.display=role.value==="dept"?"block":"none"};
+  document.getElementById("ws-unlock").onclick=unlock;
+  document.getElementById("ws-pin").onkeydown=e=>{if(e.key==="Enter")unlock()};
+  ["ws-logout","ws-logout2"].forEach(id=>{const b=document.getElementById(id);if(b)b.onclick=wsLogout});
+}
+async function unlock(){
+  const role=document.getElementById("ws-role").value;
+  const pin=document.getElementById("ws-pin").value;
+  const msg=document.getElementById("ws-gatemsg"); msg.textContent="";
+  const h=await sha256(pin);
+  if(role==="mgmt"){
+    if(h!==PINS._admin){msg.textContent="Wrong management PIN.";return}
+    wsRole="mgmt"; showWs("ws-mgmt"); renderWsMgmt();
+  }else{
+    const code=document.getElementById("ws-dept").value;
+    const ok = h===PINS._team || h===PINS[code];
+    if(!ok){msg.textContent="Wrong PIN for this department.";return}
+    wsRole="dept"; wsDept=code; showWs("ws-editor"); renderWsEditor();
+  }
+  document.getElementById("ws-pin").value="";
+}
+function wsLogout(){wsRole=null;wsDept=null;showWs("ws-gate")}
+function showWs(id){["ws-gate","ws-editor","ws-mgmt"].forEach(x=>{
+  document.getElementById(x).style.display = x===id?"block":"none"})}
+
+function wsRecalc(){const done=wsTasks.reduce((a,t)=>a+W[t.s],0);
+  document.getElementById("ws-pct").textContent=Math.round(done/(wsTasks.length||1)*100)}
+function renderWsEditor(){
+  const d=DEPTS.find(x=>x.code===wsDept);
+  wsTasks=d.tasks.map(t=>({...t}));
+  const b=document.getElementById("ws-badge"); b.textContent=d.code; b.style.background=d.color;
+  document.getElementById("ws-name").textContent=d.name;
+  document.getElementById("ws-lead").textContent=d.lead;
+  document.getElementById("ws-state").textContent="backend: "+(CONFIG.API?"live":"demo");
+  drawWsRows(); wsRecalc();
+  document.getElementById("ws-add").onclick=()=>{wsTasks.push({id:wsDept+"-"+Math.random().toString(36).slice(2,6),cid:"—",t:"",s:"open",ph:"ach",req:false});drawWsRows();wsRecalc()};
+  document.getElementById("ws-save").onclick=saveWs;
+}
+function drawWsRows(){
+  const opts=ST.map(([c,l])=>`<option value="${c}">${l}</option>`).join("");
+  const rows=wsTasks.map((t,i)=>`<tr>
+    <td class="cidcol" style="width:64px"><input data-i="${i}" data-f="cid" value="${t.cid||''}"/></td>
+    <td><input data-i="${i}" data-f="t" value="${(t.t||'').replace(/"/g,'&quot;')}" placeholder="task description"/></td>
+    <td style="width:140px"><select class="st ws-st-${t.s}" data-i="${i}" data-f="s">${opts}</select></td>
+    <td style="width:120px"><select data-i="${i}" data-f="ph"><option value="ach">Achieve</option><option value="mnt">Maintain</option></select></td>
+    <td style="width:40px"><button class="ws-del" data-del="${i}" title="Delete task">✕</button></td></tr>`).join("");
+  const tbl=document.getElementById("ws-table");
+  tbl.innerHTML=`<thead><tr><th>Credit</th><th>Task</th><th>Status</th><th>Phase</th><th></th></tr></thead><tbody>${rows}</tbody>`;
+  tbl.querySelectorAll("select[data-f='s']").forEach(s=>s.value=wsTasks[+s.dataset.i].s);
+  tbl.querySelectorAll("select[data-f='ph']").forEach(s=>s.value=wsTasks[+s.dataset.i].ph);
+  tbl.querySelectorAll("input,select").forEach(el=>el.onchange=()=>{
+    const t=wsTasks[+el.dataset.i]; t[el.dataset.f]=el.value;
+    if(el.dataset.f==="s"){el.className="st ws-st-"+el.value;wsRecalc()}});
+  tbl.querySelectorAll("[data-del]").forEach(btn=>btn.onclick=()=>{wsTasks.splice(+btn.dataset.del,1);drawWsRows();wsRecalc()});
+}
+async function saveWs(){
+  const d=DEPTS.find(x=>x.code===wsDept);
+  d.tasks=wsTasks.map(t=>({...t}));               // commit in memory -> shows everywhere
+  renderDepts(); deptChart();                      // Departments board + chart update now
+  const m=document.getElementById("ws-savemsg");
+  const ok=await syncDept(wsDept,d.lead);
+  m.textContent = CONFIG.API ? (ok?"Saved & published ✓":"Saved locally (network issue)") : "Published to board ✓ (demo — set endpoint to persist)";
+  setTimeout(()=>m.textContent="",3500);
+}
+function renderWsMgmt(){
+  const ctx=document.getElementById("wsChart");
+  const sorted=[...DEPTS].sort((a,b)=>deptPct(b)-deptPct(a));
+  if(window._ws&&window._ws.destroy)window._ws.destroy();
+  window._ws=new Chart(ctx,{type:"bar",data:{labels:sorted.map(d=>d.code),
+    datasets:[{data:sorted.map(deptPct),backgroundColor:sorted.map(d=>{const p=deptPct(d);return p>=75?"#7FA80F":p>=45?"#E6A12E":"#C7522A"}),borderRadius:6}]},
+    options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{title:i=>sorted[i[0].dataIndex].name,label:i=>i.raw+"% complete"}}},
+      scales:{x:{max:100,grid:{color:"#E7ECE7"},ticks:{font:{family:"IBM Plex Mono"},callback:v=>v+"%"}},
+        y:{grid:{display:false},ticks:{font:{family:"IBM Plex Mono",weight:"600"}}}}}});
+  const list=document.getElementById("ws-mgmt-list");
+  list.innerHTML=DEPTS.map(d=>{const p=deptPct(d);const col=p>=75?"var(--lime-deep)":p>=45?"var(--amber)":"var(--sienna)";
+    const c=d.tasks.reduce((o,t)=>{o[t.s]=(o[t.s]||0)+1;return o},{});
+    return `<div class="ws-mini"><div class="ws-mini-top"><b>${d.name}</b>
+      <span class="mono" style="font-size:12px;color:var(--muted)">${c.done||0} done · ${c.prog||0} wip · ${(c.open||0)+(c.gap||0)} open · <b style="color:var(--ink)">${p}%</b></span></div>
+      <div class="ws-mini-bar"><i style="width:${p}%;background:${col}"></i></div></div>`}).join("");
+}
+
+/* ---------- nav ---------- */
+function wireNav(){
+  document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+    document.getElementById('v-'+b.dataset.v).classList.add('on');
+    if(b.dataset.v==='birds')trajChart();
+    if(b.dataset.v==='depts')deptChart();
+    if(b.dataset.v==='workspace'){renderWsGate(); if(wsRole==='mgmt')renderWsMgmt();}
+  });
+}
+
+/* ---------- ACCESS GATE ---------- */
+function wireGate(){
+  const gate=document.getElementById('gate'),pw=document.getElementById('gate-pw'),msg=document.getElementById('gate-msg');
+  document.body.style.overflow='hidden';
+  async function go(){
+    const h=await sha256(pw.value);
+    if(h===CONFIG.GATE_HASH){gate.style.display='none';document.body.style.overflow='';}
+    else{msg.textContent='Incorrect password.';pw.select();}
+  }
+  document.getElementById('gate-go').onclick=go;
+  pw.addEventListener('keydown',e=>{if(e.key==='Enter')go()});
+  setTimeout(()=>pw.focus(),50);
+}
+function fillDivSelect(){
+  const sel=document.getElementById('f-div'); if(!sel)return; sel.innerHTML='';
+  Object.keys(DIVISIONS).forEach(n=>sel.add(new Option(n,n)));
+}
+
+(async function init(){
+  wireGate();
+  await hydrate(); await fetchTasks();
+  renderBirds(); renderDivTabs(); renderScore(); renderRoad(); renderMaint(); wireRoadSplit(); renderDepts(); renderWsGate(); renderDocs(); renderCost(); wireEntry(); fillDivSelect(); wireNav();
+})();
+</script>
+</body>
+</html>
